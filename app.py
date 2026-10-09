@@ -13,6 +13,20 @@ NOMBRES = {
     "hemoglobina": "Hemoglobina", "hipertension": "Hipertensión", "diabetes": "Diabetes",
     "ant_fam_hiper": "Antec. familiar HTA",
 }
+def mostrar_fig(fig):
+    """Renderiza la figura a PNG sin pasar por savefig (evita el error 'Done' de matplotlib en la nube)."""
+    import io
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    try:
+        fig.tight_layout(); fig.subplots_adjust(right=0.9)
+    except Exception:
+        pass
+    buf = io.BytesIO()
+    FigureCanvasAgg(fig).print_png(buf)
+    plt.close(fig)
+    st.image(buf.getvalue(), width="stretch")
+
+
 ROJO, VERDE, AZUL, AMBAR = "#ff6b8b", "#4ade80", "#60a5fa", "#fbbf24"
 
 st.markdown("""
@@ -127,7 +141,7 @@ with tab1:
                                  "axes.labelcolor": "#e8ecf4", "xtick.color": "#aab3c8", "ytick.color": "#e8ecf4"}):
                 shap.plots.waterfall(ex, max_display=8, show=False)
                 fig = plt.gcf(); fig.set_size_inches(7.5, 4.2); fig.patch.set_facecolor("#0e1117")
-                st.pyplot(fig, width="stretch"); plt.close(fig)
+                mostrar_fig(fig)
             orden = np.argsort(-np.abs(sv.values[0]))[:3]
             frases = []
             for i in orden:
@@ -150,7 +164,7 @@ with tab2:
         ax.spines["bottom"].set_color("#2c3550"); ax.set_xlabel("Contribución media a la probabilidad")
         for i, v in enumerate(imp.values):
             ax.text(v + imp.max() * 0.01, i, f"{v:.3f}", va="center", color="#e8ecf4", fontsize=9)
-        st.pyplot(fig, width="stretch"); plt.close(fig)
+        mostrar_fig(fig)
     st.markdown(f"La **presión arterial media (PAM)** domina las predicciones del modelo, muy por encima del resto de variables. "
                 "Esta importancia describe la lógica del modelo, no relaciones causales.")
 
