@@ -1,0 +1,1 @@
+{"features": ["edad", "edad_gestacion", "imc", "pam", "hemoglobina", "hipertension", "diabetes", "ant_fam_hiper"], "threshold": 0.55}
